@@ -1,0 +1,4 @@
+[submodule "rhtas"]
+	path = rhtas
+	url = https://github.com/sabre1041/sigstore-ocp
+	branch = main

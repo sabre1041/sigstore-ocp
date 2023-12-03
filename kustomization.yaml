@@ -17,7 +17,7 @@ kind: Kustomization
 #     name: fulcio-server
 
 helmGlobals:
-  chartHome: ../tas/charts
+  chartHome: rhtas/charts
 
 helmCharts:
   - name: trusted-artifact-signer
