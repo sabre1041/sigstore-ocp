@@ -18,7 +18,7 @@ configs:
       registry: quay.io
       repository: ablock/tas-initializer-job
       version: sha256:472f4f88817218d377e92d8e2aafeedd691d10cd099af55aea03c04d8bf36c72
-
+      pullPolicy: Always
 
 # github.com/sigstore/helm-charts/charts
 scaffold:
