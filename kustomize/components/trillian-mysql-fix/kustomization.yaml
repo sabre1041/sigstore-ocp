@@ -31,23 +31,3 @@ patches:
     kind: Deployment
     namespace: trillian-system
     name: trillian-mysql
-- patch: |-
-    - op: add
-      path: "/spec/template/spec/containers/0/volumeMounts/-"
-      value:
-        mountPath: /docker-entrypoint-initdb.d/storage.sql
-        name: mysql-storage-init
-        subPath: storage.sql
-    - op: add
-      path: "/spec/template/spec/volumes/-"
-      value:
-        configMap:
-          defaultMode: 420
-          name: mysql-storage-init
-        name: mysql-storage-init
-  target:
-    group: apps
-    version: v1
-    kind: Deployment
-    namespace: trillian-system
-    name: trillian-mysql
