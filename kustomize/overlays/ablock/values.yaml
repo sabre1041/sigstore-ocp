@@ -14,6 +14,11 @@ configs:
       organization_name: Andyserver
       email_address: tas@andyserver.com
       password: tas-andyserver
+    image:
+      registry: quay.io
+      repository: ablock/tas-initializer-job
+      version: sha256:4f4637b76bed77e3a0012582747adc97605f8122cd2bfb6b4d32b701218a0133
+
 
 # github.com/sigstore/helm-charts/charts
 scaffold:
