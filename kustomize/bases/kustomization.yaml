@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+- name: mysql-storage-init
+  namespace: trillian-system
+  files:
+  - storage.sql
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+patches:
+- patch: |-
+    - op: add
+      path: "/metadata/labels"
+      value:
+        openshift.io/cluster-monitoring: "true"
+  target:
+    version: v1
+    kind: Namespace

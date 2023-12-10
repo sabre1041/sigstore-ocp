@@ -1,0 +1,50 @@
+
+global:
+  appsSubdomain: apps.ablock.devcluster.openshift.com
+configs:
+  cosign_deploy:
+    enabled: true
+  # Need to create it for now since theres no way to disable it yet :(
+  segment_backup_job:
+    namespace: trusted-artifact-signer-monitoring
+    namespace_create: true
+  tas_initializer_job:
+    enabled: true
+    secret:
+      organization_name: Andyserver
+      email_address: tas@andyserver.com
+      password: tas-andyserver
+
+# github.com/sigstore/helm-charts/charts
+scaffold:
+  fulcio:
+    server:
+      ingress:
+        http:
+          hosts:
+            - host: fulcio.apps.ablock.devcluster.openshift.com
+              path: /
+    config:
+      contents:
+        OIDCIssuers:
+          ? https://keycloak-keycloak-system.apps.ablock.devcluster.openshift.com/auth/realms/sigstore
+          : IssuerURL: https://keycloak-keycloak-system.apps.ablock.devcluster.openshift.com/auth/realms/sigstore
+            ClientID: sigstore
+            Type: email
+  rekor:
+    server:
+      ingress:
+        hosts:
+          - host: rekor.apps.ablock.devcluster.openshift.com
+            path: /
+  tuf:
+    ingress:
+      http:
+        hosts:
+          - host: tuf.apps.ablock.devcluster.openshift.com
+            path: /
+  trillian:
+    mysql:
+      auth:
+        rootPassword: trillianRootPassword
+        password: trillianPassword
