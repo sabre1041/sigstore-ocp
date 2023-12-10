@@ -13,6 +13,9 @@ spec:
     repoURL: https://github.com/sabre1041/sigstore-ocp
     targetRevision: declarative
   syncPolicy:
+    automated: 
+      prune: true
+      selfHeal: true
     syncOptions:
     - CreateNamespace=true
     retry:
