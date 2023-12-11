@@ -11,7 +11,12 @@ Execute the following command to deploy OpenShift GitOps
 kubectl apply -f argocd/operator
 ```
 
-Wait until the OpenShift GitOps Operator has been deployed and the 
+Wait until the OpenShift GitOps Operator has been deployed and the `ArgoCD` Custom Resource is available.
+
+```shell
+until kubectl wait crd/argocds.argoproj.io --for condition=established &>/dev/null; do sleep 5; done
+until kubectl get argocd -n openshift-gitops openshift-gitops &>/dev/null; do sleep 5; done
+```
 
 2. Argo CD Configuration
 
