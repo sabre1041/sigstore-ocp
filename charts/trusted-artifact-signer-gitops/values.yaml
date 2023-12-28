@@ -11,3 +11,7 @@ gitops:
     url: https://github.com/sabre1041/sigstore-ocp.git
     revision: declarative
     path: kustomize/overlays/standard
+
+rhtas:
+  spiffe:
+    enabled: false
