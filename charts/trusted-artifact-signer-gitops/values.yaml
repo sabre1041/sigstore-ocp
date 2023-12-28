@@ -1,0 +1,13 @@
+---
+
+appsSubdomain: ""
+
+gitops:
+  applicationName: trusted-artifact-signer
+  destinationNamespace: trusted-artifact-signer
+  destinationServer: https://kubernetes.default.svc
+  project: default
+  source:
+    url: https://github.com/sabre1041/sigstore-ocp.git
+    revision: declarative
+    path: kustomize/overlays/standard

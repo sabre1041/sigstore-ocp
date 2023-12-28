@@ -1,6 +1,6 @@
 
 global:
-  appsSubdomain: apps.ablock.devcluster.openshift.com
+  appsSubdomain: apps.rhtas.openshift.io
 configs:
   cosign_deploy:
     enabled: true
@@ -11,9 +11,9 @@ configs:
   tas_initializer_job:
     enabled: true
     secret:
-      organization_name: Andyserver
-      email_address: tas@andyserver.com
-      password: tas-andyserver
+      organization_name: Red Hat
+      email_address: rhtas@redhat.com
+      password: rhtasPassword
     image:
       registry: quay.io
       repository: ablock/tas-initializer-job
@@ -27,26 +27,26 @@ scaffold:
       ingress:
         http:
           hosts:
-            - host: fulcio.apps.ablock.devcluster.openshift.com
+            - host: fulcio.apps.rhtas.openshift.io
               path: /
     config:
       contents:
         OIDCIssuers:
-          ? https://keycloak-keycloak-system.apps.ablock.devcluster.openshift.com/auth/realms/sigstore
-          : IssuerURL: https://keycloak-keycloak-system.apps.ablock.devcluster.openshift.com/auth/realms/sigstore
+          ? https://keycloak-keycloak-system.apps.rhtas.openshift.io/auth/realms/sigstore
+          : IssuerURL: https://keycloak-keycloak-system.apps.rhtas.openshift.io/auth/realms/sigstore
             ClientID: sigstore
             Type: email
   rekor:
     server:
       ingress:
         hosts:
-          - host: rekor.apps.ablock.devcluster.openshift.com
+          - host: rekor.apps.rhtas.openshift.io
             path: /
   tuf:
     ingress:
       http:
         hosts:
-          - host: tuf.apps.ablock.devcluster.openshift.com
+          - host: tuf.apps.rhtas.openshift.io
             path: /
   trillian:
     mysql:

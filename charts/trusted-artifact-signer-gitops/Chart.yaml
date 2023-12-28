@@ -1,0 +1,4 @@
+apiVersion: v2
+name: trusted-artifact-signer-gitops
+description: Red Hat Trusted Artifact Signer GitOps Chart
+version: 0.1.0

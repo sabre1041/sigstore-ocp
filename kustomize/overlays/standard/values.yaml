@@ -1,0 +1,55 @@
+
+global:
+  appsSubdomain: apps.rhtas.openshift.io
+configs:
+  cosign_deploy:
+    enabled: true
+  # Need to create it for now since theres no way to disable it yet :(
+  segment_backup_job:
+    namespace: trusted-artifact-signer-monitoring
+    namespace_create: true
+  tas_initializer_job:
+    enabled: true
+    secret:
+      organization_name: Red Hat
+      email_address: rhtas@redhat.com
+      password: rhtasPassword
+    image:
+      registry: quay.io
+      repository: ablock/tas-initializer-job
+      version: sha256:472f4f88817218d377e92d8e2aafeedd691d10cd099af55aea03c04d8bf36c72
+      pullPolicy: Always
+
+# github.com/sigstore/helm-charts/charts
+scaffold:
+  fulcio:
+    server:
+      ingress:
+        http:
+          hosts:
+            - host: fulcio.apps.rhtas.openshift.io
+              path: /
+    config:
+      contents:
+        OIDCIssuers:
+          ? https://keycloak-keycloak-system.apps.rhtas.openshift.io/auth/realms/sigstore
+          : IssuerURL: https://keycloak-keycloak-system.apps.rhtas.openshift.io/auth/realms/sigstore
+            ClientID: sigstore
+            Type: email
+  rekor:
+    server:
+      ingress:
+        hosts:
+          - host: rekor.apps.rhtas.openshift.io
+            path: /
+  tuf:
+    ingress:
+      http:
+        hosts:
+          - host: tuf.apps.rhtas.openshift.io
+            path: /
+  trillian:
+    mysql:
+      auth:
+        rootPassword: trillianRootPassword
+        password: trillianPassword

@@ -4,7 +4,6 @@ kind: Kustomization
 components:
   - "../../components/cluster-monitoring-label"
   - "../../components/trillian-mysql-fix"
-  - "../../components/fulcio-inject-kube-root-ca"
 
 helmGlobals:
   chartHome: ../../../rhtas/charts
