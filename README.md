@@ -23,7 +23,7 @@ until kubectl get argocd -n openshift-gitops openshift-gitops &>/dev/null; do sl
 Configure custom Kustomize build options against the `ArgoCD` resource:
 
 ```shell
-kubectl apply --server-side=true --force-conflicts -f argocd/config/argocd.yaml
+kubectl apply --server-side=true -f argocd/config/argocd.yaml
 ```
 
 The deployment of RHTAS requires elevated permissions on the target cluster. A default policy that configures the default instance of OpenShift with elevated permissions can be applied by applying executing the following command:
@@ -34,12 +34,24 @@ kubectl apply -f argocd/rbac/clusterrolebinding.yaml
 
 3. Create the Argo CD Applications
 
-The Argo CD Applications are located in the [argocd/apps](argocd/apps) directory. Feel free to modify them as necessary so that they refer to the appropriate Git repository/branch and directory.
+A series of Argo CD Applications will be created to deploy RHTAS as well as any dependencies (such as RHSSO/Keycloak).
 
-Execute the following command to create the Argo CD Applications:
+Deploy Keycloak by executing the following command:
 
 ```shell
-kubectl apply -f argocd/apps
+oc apply -f argocd/apps/keycloak-operator.yaml -f argocd/apps/keycloak.yaml
+```
+
+Finally, the Argo CD Application for RHTAS can be deployed. Execute the [scropts/deploy-rhtas.sh] script. The following parameters are available:
+
+* `-s` - Integrate with [SPIFFE](https://spiffe.io) using the steps as described in [this repository](https://github.com/sabre1041/spiffe-openshift).
+* `-i` - Configure RHTAS to trust the default cluster generated certificates
+* `-a` - Specify the _apps_ subdomain (otherwise will obtain the cluster default).
+
+Execute the script:
+
+```shell
+./scripts/deploy-rhtas.sh
 ```
 
 RHTAS will now be deployed and available shortly.

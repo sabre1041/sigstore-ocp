@@ -2,7 +2,7 @@
 Create the list of patches to apply.
 */}}
 {{- define "trusted-artifact-signer-gitops.patches" -}}
-{{- $patches := append ((include "trusted-artifact-signer-gitops.ingressPatches" .) | fromYamlArray) (append ((include "trusted-artifact-signer-gitops.cliDownloads" .) | fromYamlArray) ((include "trusted-artifact-signer-gitops.fulcioConfig" .) | fromYamlArray)) -}}
+{{- $patches := concat ((include "trusted-artifact-signer-gitops.ingressPatches" .) | fromYamlArray) (concat ((include "trusted-artifact-signer-gitops.cliDownloads" .) | fromYamlArray) ((include "trusted-artifact-signer-gitops.fulcioConfig" .) | fromYamlArray)) -}}
 {{- $patches | toYaml -}}
 {{- end }}
 
