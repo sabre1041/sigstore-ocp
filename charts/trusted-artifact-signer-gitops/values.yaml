@@ -10,8 +10,9 @@ gitops:
   source:
     url: https://github.com/sabre1041/sigstore-ocp.git
     revision: declarative
-    path: kustomize/overlays/standard
+    path: kustomize/overlays/openshift
 
 rhtas:
   spiffe:
     enabled: false
+  pull_secret: ""

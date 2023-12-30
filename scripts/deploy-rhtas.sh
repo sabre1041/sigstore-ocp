@@ -7,22 +7,24 @@ export GITOPS_NAMESPACE="openshift-gitops"
 
 export REPOSITORY_URL="https://github.com/sabre1041/sigstore-ocp.git"
 export REPOSITORY_BRANCH="declarative"
-export REPOSITORY_PATH="kustomize/overlays/standard"
+export REPOSITORY_DIRECTORY="kustomize/overlays/openshift"
 OC_TOOL="oc"
 EXTRA_ARGS=""
+PULL_SECRET=""
 
 function display_help {
-  echo "./$(basename "$0") [ -a | --apps-domain APPS_DOMAIN ] [ -b | --branch BRANCH ] [ -gn | --gitops-namespace NAMESPACE ] [ -h | --help ] [ -r | --repository REPOSITORY ] [ -t | --tool TOOL ] [ -s | --spiffe ] [ -i | --insecure ]
+  echo "./$(basename "$0") [ -a | --apps-domain APPS_DOMAIN ] [ -b | --branch BRANCH ] [ -d | --directory DIRECTORY ] [ -gn | --gitops-namespace NAMESPACE ] [ -h | --help ] [ -p | --pull-secret PULL_SECRET ] [ -r | --repository REPOSITORY ] [ -t | --tool TOOL ] [ -s | --spiffe ] [ -i | --insecure ]
 
 Deployment of Argo CD Assets to deploy Red Hat Trusted Artifact Signer (RHTAS)
 
 Where:
   -a  | --apps-domain       OpenShift 'apps' domain
   -b  | --branch            Branch of the repository containing the source content. Defaults to '${REPOSITORY_BRANCH}'
+  -d  | --directory         Directory within the repository containing the Kustomize manifests. Defaults to '${REPOSITORY_DIRECTORY}'
   -gn | --gitops-namespace  Namespace where Argo CD Applications will be installed within. Defaults to '${GITOPS_NAMESPACE}'
   -i  | --insecure          Configure RHTAS to leverage default cluster generated certificates
   -h  | --help              Display this help text
-  -p  | --path              Path within the repository containing the Kustomize manifests. Defaults to '${REPOSITORY_PATH}'
+  -p  | --pull-secret       OpenShift Pull Secret.
   -r  | --repository        Repository containing the source content. Defaults to '${REPOSITORY_URL}'
   -s  | --spiffe            Enable SPIFFE Integration
   -t  | --tool              Tool for communicating with OpenShift cluster. Defaults to '${OC_TOOL}'
@@ -44,17 +46,22 @@ case $i in
     REPOSITORY_BRANCH="${1}"
     shift
     ;;
+    -d | --directory )
+    shift
+    REPOSITORY_DIRECTORY="${1}"
+    shift
+    ;;
     -gn | --gitops-namespace )
     GITOPS_NAMESPACE="${1}"
     shift
     ;;
     -i | --insecure )
-    REPOSITORY_PATH="kustomize/overlays/standard-insecure"
+    REPOSITORY_DIRECTORY="kustomize/overlays/openshift-insecure"
     shift
     ;;
-    -p | --path )
+    -p | --pull-secret )
     shift
-    REPOSITORY_PATH="${1}"
+    PULL_SECRET="${1}"
     shift
     ;;
     -r | --repository )
@@ -63,7 +70,7 @@ case $i in
     shift
     ;;
     -s | --spiffe )
-    EXTRA_ARGS+="--set rhtas.spiffe.enabled=true"
+    EXTRA_ARGS+=" --set rhtas.spiffe.enabled=true"
     shift
     ;;
     -t | --tool )
@@ -101,14 +108,18 @@ if [[ -z "${OPENSHIFT_APPS_DOMAIN}" ]]; then
   OPENSHIFT_APPS_DOMAIN=$(${OC_TOOL} get cm -n openshift-config-managed  console-public -o go-template="{{ .data.consoleURL }}" | sed 's@https://@@; s/^[^.]*\.//')
 fi
 
-# Install RHTAS GitOps Chart
+if [[ ! -z "${PULL_SECRET}" ]]; then
+  EXTRA_ARGS+=" --set-literal rhtas.pull_secret=${PULL_SECRET}"
+fi
+
+# Render RHTAS GitOps Chart
 helm template \
   -n ${GITOPS_NAMESPACE} \
   ${SCRIPT_BASE_DIR}/../charts/trusted-artifact-signer-gitops \
   --set appsSubdomain=${OPENSHIFT_APPS_DOMAIN} \
   --set gitops.source.url=${REPOSITORY_URL} \
   --set gitops.source.branch=${REPOSITORY_BRANCH} \
-  --set gitops.source.path=${REPOSITORY_PATH} ${EXTRA_ARGS} \
+  --set gitops.source.path=${REPOSITORY_DIRECTORY} ${EXTRA_ARGS} \
   | ${OC_TOOL} apply -f-
 
 if [[ $? -ne 0 ]]; then

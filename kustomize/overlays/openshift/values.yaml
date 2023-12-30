@@ -4,21 +4,18 @@ global:
 configs:
   cosign_deploy:
     enabled: true
+  pull_secret:
+    value: "{}"
   # Need to create it for now since theres no way to disable it yet :(
   segment_backup_job:
     namespace: trusted-artifact-signer-monitoring
     namespace_create: true
   tas_initializer_job:
     enabled: true
-    secret:
-      organization_name: Red Hat
-      email_address: rhtas@redhat.com
-      password: rhtasPassword
     image:
       registry: quay.io
       repository: ablock/tas-initializer-job
       version: sha256:472f4f88817218d377e92d8e2aafeedd691d10cd099af55aea03c04d8bf36c72
-      pullPolicy: Always
 
 # github.com/sigstore/helm-charts/charts
 scaffold:
