@@ -2,7 +2,7 @@
 Create the list of patches to apply.
 */}}
 {{- define "trusted-artifact-signer-gitops.patches" -}}
-{{- $patches := concat ((include "trusted-artifact-signer-gitops.ingressPatches" .) | fromYamlArray) (concat ((include "trusted-artifact-signer-gitops.cliDownloads" .) | fromYamlArray) ((include "trusted-artifact-signer-gitops.fulcioConfig" .) | fromYamlArray)) -}}
+{{- $patches := concat ((include "trusted-artifact-signer-gitops.ingressPatches" .) | fromYamlArray) (concat ((include "trusted-artifact-signer-gitops.miscPatches" .) | fromYamlArray) (concat ((include "trusted-artifact-signer-gitops.cliDownloads" .) | fromYamlArray) ((include "trusted-artifact-signer-gitops.fulcioConfig" .) | fromYamlArray))) -}}
 {{- $patches | toYaml -}}
 {{- end }}
 
@@ -137,4 +137,41 @@ SPIFFE OIDC Issuers.
   }
 {{- end -}}
 }
+{{- end }}
+
+{{/*
+Misc Patches.
+*/}}
+{{- define "trusted-artifact-signer-gitops.miscPatches" -}}
+{{- if $.Values.rhtas.pull_secret -}}
+- patch: |-
+    - op: replace
+      path: /data/pull-secret.json
+      value: {{ $.Values.rhtas.pull_secret | b64enc }}
+  target:
+    kind: Secret
+    name: pull-secret
+{{- else -}}
+- patch: |-
+    - op: add
+      path: /spec/suspend
+      value: true
+    - op: remove
+      path: /spec/jobTemplate/spec/template/spec/containers/0/env
+    - op: replace
+      path: /spec/jobTemplate/spec/template/spec/containers/0/command
+      value: ["/bin/bash", "-c", "echo 'Pull Secret Not Provided. Segment Backup Job Disabled'"]
+  target:
+    kind: CronJob
+    name: segment-backup-job
+- patch: |-
+    - op: remove
+      path: /spec/template/spec/containers/0/env
+    - op: replace
+      path: /spec/template/spec/containers/0/command
+      value: ["/bin/bash", "-c", "echo 'Pull Secret Not Provided. Segment Backup Job Disabled'"]
+  target:
+    kind: Job
+    name: segment-backup-job
+{{- end -}}
 {{- end }}

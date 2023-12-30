@@ -42,16 +42,24 @@ Deploy Keycloak by executing the following command:
 oc apply -f argocd/apps/keycloak-operator.yaml -f argocd/apps/keycloak.yaml
 ```
 
-Finally, the Argo CD Application for RHTAS can be deployed. Execute the [scropts/deploy-rhtas.sh] script. The following parameters are available:
+4. Execute the Argo CD Application Generation Script
 
-* `-s` - Integrate with [SPIFFE](https://spiffe.io) using the steps as described in [this repository](https://github.com/sabre1041/spiffe-openshift).
-* `-i` - Configure RHTAS to trust the default cluster generated certificates
+A script is available that will call a Helm chart to render the contents of an Argo CD Application to facilitate the deployment of RHTAS. Execute the [scripts/deploy-rhtas.sh] script. The following parameters are available:
+
 * `-a` - Specify the _apps_ subdomain (otherwise will obtain the cluster default).
+* `-b` - Branch of the repository to source contents.
+* `-d` - Directory of the Kustomize overlay
+* `-i` - Configure RHTAS to trust the default cluster generated certificates
+* `-p` - Specify the contents of RHTAS Pull Secret. If this value is omitted, the Segment Backup Job will be disabled.
+* `-r` - Repository containing the source content
+* `-s` - Integrate with [SPIFFE](https://spiffe.io) using the steps as described in [this repository](https://github.com/sabre1041/spiffe-openshift).
+
+THe full list can be seen by inspecting the script.
 
 Execute the script:
 
 ```shell
-./scripts/deploy-rhtas.sh
+./scripts/deploy-rhtas.sh [options]
 ```
 
 RHTAS will now be deployed and available shortly.
