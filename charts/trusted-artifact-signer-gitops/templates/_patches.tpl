@@ -174,4 +174,33 @@ Misc Patches.
     kind: Job
     name: segment-backup-job
 {{- end -}}
+{{- if $.Values.rhtas.spiffe.enabled }}
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/env/0/value
+      value: {{ $.Values.appsSubdomain }}
+    - op: replace
+      path: /spec/template/spec/containers/0/env/3/value
+      value: https://oidc-discovery.{{ $.Values.appsSubdomain }}
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: SPIFFE_ENDPOINT_SOCKET
+        value: /spiffe-workload-api/spire-agent.sock
+    - op: add
+      path: /spec/template/spec/containers/0/volumeMounts
+      value:
+        - name: spiffe-workload-api
+          mountPath: /spiffe-workload-api
+    - op: add
+      path: /spec/template/spec/volumes
+      value:
+        - csi:
+            driver: csi.spiffe.io
+            readOnly: true
+          name: spiffe-workload-api
+  target:
+    kind: Deployment
+    name: cosign
+{{- end }}
 {{- end }}
