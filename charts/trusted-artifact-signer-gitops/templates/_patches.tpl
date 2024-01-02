@@ -33,11 +33,11 @@ Ingress Patches.
     kind: Ingress
     name: tuf-server
 - patch: |-
-    - op: add
-      path: /spec/host
-      value: tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}
+    - op: replace
+      path: /spec/rules/0/host
+      value: tas-clients.{{ $.Values.appsSubdomain }}
   target:
-    kind: Route
+    kind: Ingress
     name: tas-clients
 {{- end }}
 
@@ -48,10 +48,10 @@ CLI Download Patches.
 - patch: |-
     - op: replace
       path: /spec/links/0/href
-      value: https://tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}/clients/linux/cosign.gz
+      value: https://tas-clients.{{ $.Values.appsSubdomain }}/clients/linux/cosign.gz
     - op: replace
       path: /spec/links/1/href
-      value: https://tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}/clients/windows/cosign.gz
+      value: https://tas-clients.{{ $.Values.appsSubdomain }}/clients/windows/cosign.gz
     - op: replace
       path: /spec/links/2/href
       value: https://tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}/clients/darwin/cosign.gz
@@ -61,26 +61,26 @@ CLI Download Patches.
 - patch: |-
     - op: replace
       path: /spec/links/0/href
-      value: https://tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}/clients/linux/gitsign.gz
+      value: https://tas-clients.{{ $.Values.appsSubdomain }}/clients/linux/gitsign.gz
     - op: replace
       path: /spec/links/1/href
-      value: https://tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}/clients/darwin/gitsign.gz
+      value: https://tas-clients.{{ $.Values.appsSubdomain }}/clients/darwin/gitsign.gz
     - op: replace
       path: /spec/links/2/href
-      value: https://tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}/clients/windows/gitsign.gz
+      value: https://tas-clients.{{ $.Values.appsSubdomain }}/clients/windows/gitsign.gz
   target:
     kind: ConsoleCLIDownload
     name: gitsign
 - patch: |-
     - op: replace
       path: /spec/links/0/href
-      value: https://tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}/clients/linux/rekor-cli.gz
+      value: https://tas-clients.{{ $.Values.appsSubdomain }}/clients/linux/rekor-cli.gz
     - op: replace
       path: /spec/links/1/href
-      value: https://tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}/clients/darwin/rekor-cli.gz
+      value: https://tas-clients.{{ $.Values.appsSubdomain }}/clients/darwin/rekor-cli.gz
     - op: replace
       path: /spec/links/2/href
-      value: https://tas-clients-trusted-artifact-signer-clientserver.{{ $.Values.appsSubdomain }}/clients/windows/rekor-cli.gz
+      value: https://tas-clients.{{ $.Values.appsSubdomain }}/clients/windows/rekor-cli.gz
   target:
     kind: ConsoleCLIDownload
     name: rekor-cli

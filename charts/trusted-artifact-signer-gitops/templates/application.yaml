@@ -12,7 +12,7 @@ spec:
   project: {{ .Values.gitops.project }}
   source:
     repoURL: {{ .Values.gitops.source.url }}
-    targetRevision: {{ .Values.gitops.source.branch }}
+    targetRevision: {{ .Values.gitops.source.revision }}
     path: {{ .Values.gitops.source.path }}
     kustomize:
       patches: {{ include "trusted-artifact-signer-gitops.patches" . | fromYamlArray | toYaml | nindent 8 }}
@@ -22,6 +22,8 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true
+    - RespectIgnoreDifferences=true
     retry:
       limit: -1
       backoff:
