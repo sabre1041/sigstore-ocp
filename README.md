@@ -23,7 +23,7 @@ until kubectl get argocd -n openshift-gitops openshift-gitops &>/dev/null; do sl
 Configure custom Kustomize build options against the `ArgoCD` resource:
 
 ```shell
-kubectl apply --server-side=true -f argocd/config/argocd.yaml
+kubectl apply --server-side=true --force-conflicts -f argocd/config/argocd.yaml
 ```
 
 The deployment of RHTAS requires elevated permissions on the target cluster. A default policy that configures the default instance of OpenShift with elevated permissions can be applied by applying executing the following command:

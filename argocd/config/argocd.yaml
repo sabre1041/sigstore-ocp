@@ -5,3 +5,12 @@ metadata:
   namespace: openshift-gitops
 spec:
   kustomizeBuildOptions: --enable-helm --load-restrictor LoadRestrictionsNone
+  rbac:                                           
+    defaultPolicy: 'role:admin'
+  server:
+    insecure: true
+    route:
+      enabled: true
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
