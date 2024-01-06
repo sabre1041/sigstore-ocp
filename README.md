@@ -64,3 +64,14 @@ Execute the script:
 
 RHTAS will now be deployed and available shortly.
 
+## Lightweight Registry
+
+[Zot](https://zotregistry.io) is a CNCF Sandbox project and provides a lightweight registry. It is ideal for testing the integration of signing and verifying assets.
+
+An Argo CD Application is available to facilitate the deployment of Zot using OpenShift GitOps.
+
+Execute the following script to deploy the Argo CD Application to deploy Zot
+
+```shell
+./scripts/deploy-zot.sh
+```

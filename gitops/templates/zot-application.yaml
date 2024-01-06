@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zot
+  namespace: ${OPENSHIFT_GITOPS_NAMESPACE}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: registry
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: charts/zot
+    repoURL: https://github.com/project-zot/helm-charts
+    targetRevision: HEAD
+    helm:
+      values: |
+        service:
+          type: ClusterIP
+        ingress:
+            enabled: true
+            annotations:
+              route.openshift.io/termination: "edge"
+            className: null
+            hosts:
+              - host: registry.${OPENSHIFT_APPS_DOMAIN}
+                paths:
+                  - path: /
+        persistence: true
+        pvc:
+          create: true
+          storage: ${STORAGE_SIZE}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 10m
+      limit: -1
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - RespectIgnoreDifferences=true
